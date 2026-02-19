@@ -16,7 +16,7 @@ class User(UserMixin,db.Model):
 class Company(db.Model):
     id=db.Column(db.Integer,primary_key=True)
     user_id=db.Column(db.Integer,db.ForeignKey('user.id'),nullable=False)
-    name=db.Column(db.String(100),nullable=False)
+    company_name=db.Column(db.String(100),nullable=False)
     location=db.Column(db.String(100))
     description=db.Column(db.String(500))
     website=db.Column(db.String(100))
@@ -31,7 +31,7 @@ class Student(db.Model):
     branch=db.Column(db.String(100))
     cgpa=db.Column(db.Float)
     resume_url=db.Column(db.String(200))
-    applications=db.relationship('Application',backref='student',lazy=True)
+    applications=db.relationship('Applications',backref='student',lazy=True)
 
 class Job(db.Model):
     id=db.Column(db.Integer,primary_key=True)
