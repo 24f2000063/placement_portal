@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template,redirect,url_for,flash
 from .form import StudentRegistrationForm,CompanyRegistrationForm,LoginForm
 from werkzeug.security import generate_password_hash,check_password_hash,check_password_hash
-from .models import db,User,Student,Company
-from flask_login import login_user,login_required,logout_user
+from .models import db,User,Student,Company,Job,Applications
+from flask_login import login_user,login_required,logout_user,current_user
 
 main=Blueprint('main',__name__)
 
@@ -55,6 +55,12 @@ def login():
     if form.validate_on_submit():
         user=User.query.filter_by(email=form.email.data).first()
         if user and check_password_hash(user.password, form.password.data):
+
+            if user.is_blocked:
+                flash('Your account has been blocked.please contact support team','danger')
+                return redirect(url_for('main.login'))
+
+
             if user.role=='company' and not user.company_profile.is_approved:
                 flash('Your company profile is not approved yet','warning')
                 return redirect(url_for('main.index'))
@@ -86,7 +92,78 @@ def company_dashboard():
 @main.route('/admin/dashboard')
 @login_required
 def admin_dashboard():
-    return "<h1>Admin Dashboard</h1>"
+    if current_user.role!='admin':
+        flash('You are not authorized to access this page','danger')
+        return redirect(url_for('main.index'))
+
+    total_students=Student.query.count()
+    total_companies=Company.query.count()
+    total_drives=Job.query.count()
+    total_applications=Applications.query.count()
+
+    pending_companies=Company.query.filter_by(is_approved=False).all()
+    approved_companies=Company.query.filter_by(is_approved=True).all()
+
+    all_students=Student.query.all()
+
+    return render_template('admin_dashboard.html',t_students=total_students,t_companies=total_companies,
+    t_drives=total_drives,t_applications=total_applications,pending_companies=pending_companies,
+    approved_companies=approved_companies,all_students=all_students)
+
+@main.route('/admin/approve_company/<int:company_id>')
+@login_required
+def approve_company(company_id):
+    if current_user.role!='admin':
+        flash('You are not authorized to access this page','danger')
+        return redirect(url_for('main.login'))
+    
+    company=Company.query.get_or_404(company_id)
+    company.is_approved=True
+    db.session.commit()
+    flash(f'Company {company.company_name} approved successfully','success')
+    return redirect(url_for('main.admin_dashboard'))
+
+@main.route('/admin/reject_company/<int:company_id>')
+@login_required
+def reject_company(company_id):
+    if current_user.role!='admin':
+        flash('You are not authorized to access this page','danger')
+        return redirect(url_for('main.login'))
+    
+    company=Company.query.get_or_404(company_id)
+    user=User.query.get(company.user_id)
+    db.session.delete(user)
+    db.session.delete(company)
+    db.session.commit()
+    flash(f'Company {company.company_name} rejected and removed successfully','success')
+    return redirect(url_for('main.admin_dashboard'))
+
+
+@main.route('/admin/toggle_blacklist/<int:user_id>')
+@login_required
+def toggle_blacklist(user_id):
+    if current_user.role!='admin':
+        flash('You are not authorized to access this page','danger')
+        return redirect(url_for('main.login'))
+
+    
+    user=User.query.get_or_404(user_id)
+
+    if user.is_blocked:
+        user.is_blocked=False
+        flash(f'User {user.username} unblocked successfully','success')
+    else:
+        user.is_blocked=True
+        flash(f'User {user.username} blocked successfully ','danger')
+
+    db.session.commit()
+    return redirect(url_for('main.admin_dashboard'))
+
+
+
+
+
+
 
 @main.route('/logout')
 def logout():

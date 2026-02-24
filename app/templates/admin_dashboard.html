@@ -1,0 +1,164 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <h2 class="mb-4">Admin Dashboard</h2>
+
+    <div class="row mb-4 text-center">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white shadow">
+                <div class="card-body">
+                    <h5>Total Students</h5>
+                    <h3>{{t_students}}</h3>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white shadow">
+                <div class="card-body">
+                    <h5>Total Companies</h5>
+                    <h3>{{t_companies}}</h3>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white shadow">
+                <div class="card-body">
+                    <h5>Total Drives</h5>
+                    <h3>{{t_drives}}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark shadow">
+                <div class="card-body">
+                    <h5>Applications</h5>
+                    <h3>{{t_applications}}</h3>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<hr>
+
+<h4 class="mt-4 text-danger">Pending Company Approvals</h4>
+{% if pending_companies %}
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Company Name</th>
+            <th>Email</th>
+            <th>Website</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for company in pending_companies %}
+        <tr>
+            <td>{{ company.company_name}}</td>
+            <td>{{ company.user.email}}</td>
+            <td>{{ company.website}}</td>
+            <td>
+                <a href="{{ url_for('main.approve_company', company_id=company.id)}}" class="btn btn-sm btn-success">Approve</a>
+                <a href="{{url_for('main.reject_company',company_id=company.id)}}" class="btn btn-sm btn-danger">Reject</a>
+
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p class="text-success">No pending companies</p>
+{% endif %}
+
+<hr>
+
+<h4 class="mt-4 text-success">All Companies</h4>
+<table class="table table-bordered">
+    <thead class="table-secondary">
+        <tr>
+            <th>Company Name</th>
+            <th>Email</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+
+
+<tbody>
+    {% for company in approved_companies %}
+
+    <tr class="{{ 'table-danger' if company.user.is_blocked else ''}}">
+        <td>{{ company.company_name}}</td>
+        <td>{{ company.user.email}}</td>
+        <td>
+            {% if company.user.is_blocked %}
+            <span class="badge bg-danger">Blacklisted</span>
+            {% else %}
+            <span class="badge bg-success">Active</span>
+            {% endif %}
+
+        </td>
+        <td>
+            {% if company.user.is_blocked %}
+            <a href="{{url_for('main.toggle_blacklist',user_id=company.user_id)}}" class="btn btn-sm btn-success">Unblock</a>
+            {% else %}
+            <a href="{{url_for('main.toggle_blacklist',user_id=company.user_id)}}" class="btn btn-sm btn-danger">Block</a>
+            {% endif %}
+        </td>
+
+    </tr>
+
+    {% endfor %}
+</tbody>
+</table>
+
+<hr>
+
+<h4 class="mt-4">Registered Students</h4>
+<table class="table table-bordered">
+    <thead class="table-secondary">
+        <tr>
+            <th>Name</th>
+            <th>Branch</th>
+            <th>CGPA</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for student in all_students %}
+        <tr class="{{ 'table-danger' if student.user.is_blocked else ''}}">
+            <td>{{ student.name}}</td>
+            <td>{{ student.branch}}</td>
+            <td>{{ student.cgpa}}</td>
+            <td>
+                {% if student.user.is_blocked %}
+                <span class="badge bg-danger">Blacklisted</span>
+                {% else %}
+                <span class="badge bg-success">Active</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if student.user.is_blocked %}
+                <a href="{{url_for('main.toggle_blacklist',user_id=student.user_id)}}" class="btn btn-sm btn-success">Unblock</a>
+                {% else %}
+                <a href="{{url_for('main.toggle_blacklist',user_id=student.user_id)}}" class="btn btn-sm btn-danger">Block</a>
+                {% endif %}
+
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+
+</table>
+
+{% endblock %}

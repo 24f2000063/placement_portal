@@ -11,7 +11,7 @@ class StudentRegistrationForm(FlaskForm):
     cgpa=FloatField('cgpa',validators=[DataRequired()])
     branch=StringField('branch',validators=[DataRequired()])
     roll_no=StringField('roll_no',validators=[DataRequired()])
-    resume_url=StringField('resume_url',validators=[DataRequired(),URL(message="Please enter a valid URL.")])
+    resume_url=StringField('resume_url',validators=[DataRequired()])
     submit=SubmitField('Register')
 
     def validate_username(self,username):

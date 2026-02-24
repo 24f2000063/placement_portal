@@ -8,7 +8,7 @@ class User(UserMixin,db.Model):
     email=db.Column(db.String(120),unique=True,nullable=False)
     password=db.Column(db.String(128),nullable=False)
     role=db.Column(db.String(20),nullable=False)
-
+    is_blocked=db.Column(db.Boolean,default=False)
     company_profile=db.relationship('Company',backref='user',uselist=False)
     student_profile=db.relationship('Student',backref='user',uselist=False)
 
@@ -21,7 +21,7 @@ class Company(db.Model):
     description=db.Column(db.String(500))
     website=db.Column(db.String(100))
     is_approved=db.Column(db.Boolean,default=False) 
-    jobs=db.relationship('Job',backref='company',uselist=False)
+    jobs=db.relationship('Job',backref='company',lazy=True)
 
 class Student(db.Model):
     id=db.Column(db.Integer,primary_key=True)
