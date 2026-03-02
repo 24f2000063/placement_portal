@@ -67,8 +67,10 @@
             <td>{{ company.user.email}}</td>
             <td>{{ company.website}}</td>
             <td>
-                <a href="{{ url_for('main.approve_company', company_id=company.id)}}" class="btn btn-sm btn-success">Approve</a>
-                <a href="{{url_for('main.reject_company',company_id=company.id)}}" class="btn btn-sm btn-danger">Reject</a>
+                <a href="{{ url_for('main.approve_company', company_id=company.id)}}"
+                    class="btn btn-sm btn-success">Approve</a>
+                <a href="{{url_for('main.reject_company',company_id=company.id)}}"
+                    class="btn btn-sm btn-danger">Reject</a>
 
             </td>
         </tr>
@@ -93,32 +95,34 @@
     </thead>
 
 
-<tbody>
-    {% for company in approved_companies %}
+    <tbody>
+        {% for company in approved_companies %}
 
-    <tr class="{{ 'table-danger' if company.user.is_blocked else ''}}">
-        <td>{{ company.company_name}}</td>
-        <td>{{ company.user.email}}</td>
-        <td>
-            {% if company.user.is_blocked %}
-            <span class="badge bg-danger">Blacklisted</span>
-            {% else %}
-            <span class="badge bg-success">Active</span>
-            {% endif %}
+        <tr class="{{ 'table-danger' if company.user.is_blocked else ''}}">
+            <td>{{ company.company_name}}</td>
+            <td>{{ company.user.email}}</td>
+            <td>
+                {% if company.user.is_blocked %}
+                <span class="badge bg-danger">Blacklisted</span>
+                {% else %}
+                <span class="badge bg-success">Active</span>
+                {% endif %}
 
-        </td>
-        <td>
-            {% if company.user.is_blocked %}
-            <a href="{{url_for('main.toggle_blacklist',user_id=company.user_id)}}" class="btn btn-sm btn-success">Unblock</a>
-            {% else %}
-            <a href="{{url_for('main.toggle_blacklist',user_id=company.user_id)}}" class="btn btn-sm btn-danger">Block</a>
-            {% endif %}
-        </td>
+            </td>
+            <td>
+                {% if company.user.is_blocked %}
+                <a href="{{url_for('main.toggle_blacklist',user_id=company.user_id)}}"
+                    class="btn btn-sm btn-success">Unblock</a>
+                {% else %}
+                <a href="{{url_for('main.toggle_blacklist',user_id=company.user_id)}}"
+                    class="btn btn-sm btn-danger">Block</a>
+                {% endif %}
+            </td>
 
-    </tr>
+        </tr>
 
-    {% endfor %}
-</tbody>
+        {% endfor %}
+    </tbody>
 </table>
 
 <hr>
@@ -149,9 +153,11 @@
             </td>
             <td>
                 {% if student.user.is_blocked %}
-                <a href="{{url_for('main.toggle_blacklist',user_id=student.user_id)}}" class="btn btn-sm btn-success">Unblock</a>
+                <a href="{{url_for('main.toggle_blacklist',user_id=student.user_id)}}"
+                    class="btn btn-sm btn-success">Unblock</a>
                 {% else %}
-                <a href="{{url_for('main.toggle_blacklist',user_id=student.user_id)}}" class="btn btn-sm btn-danger">Block</a>
+                <a href="{{url_for('main.toggle_blacklist',user_id=student.user_id)}}"
+                    class="btn btn-sm btn-danger">Block</a>
                 {% endif %}
 
             </td>
@@ -160,5 +166,37 @@
     </tbody>
 
 </table>
+
+<hr>
+<h4 class="mt-4 text-dark">Pending Placement Drives</h4>
+{% if pending_jobs %}
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Company Name</th>
+            <th>Job Title</th>
+            <th>Salary</th>
+            <th>Deadline</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for job in pending_jobs %}
+        <tr>
+            <td>{{ job.company.company_name }}</td>
+            <td>{{ job.title }}</td>
+            <td>{{ job.salary }}</td>
+            <td>{{ job.deadline.strftime('%Y-%m-%d')}}</td>
+            <td>
+                <a href="{{url_for('main.approve_job',job_id=job.id)}}" class="btn btn-sm btn-success">Approve</a>
+                <a href="{{url_for('main.reject_job',job_id=job.id)}}" class="btn btn-sm btn-danger">Reject</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p class="text-muted">No pending job approvals.</p>
+{% endif %}
 
 {% endblock %}

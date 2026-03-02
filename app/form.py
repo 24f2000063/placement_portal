@@ -1,7 +1,10 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField,PasswordField,FloatField,SubmitField,TextAreaField
+from wtforms import StringField,PasswordField,FloatField,SubmitField,TextAreaField,DateField
 from wtforms.validators import DataRequired,Length,Email,EqualTo,URL,ValidationError
 from .models import User
+from datetime import date
+
+
 class StudentRegistrationForm(FlaskForm):
     username = StringField('username', validators=[DataRequired(),Length(min=2,max=20)])
     name=StringField('name',validators=[DataRequired()])
@@ -46,3 +49,17 @@ class LoginForm(FlaskForm):
     email=StringField('Email',validators=[DataRequired()])
     password=PasswordField('Password',validators=[DataRequired()])
     submit=SubmitField('Login')
+
+
+class JobPostForm(FlaskForm):
+    title=StringField('title',validators=[DataRequired()])
+    description=TextAreaField('job description',validators=[DataRequired()])
+    criteria=TextAreaField('Eligibility Criteria (e.g.,CGPA>7.0)',validators=[DataRequired()])
+    salary=StringField('salary_package',validators=[DataRequired()])
+    deadline=DateField('deadline',validators=[DataRequired()])
+    submit=SubmitField('Post Placement Drive')
+
+    def validate_deadline(self,deadline):
+        if deadline.data < date.today():
+            raise ValidationError('Deadline must be in the future')
+
