@@ -1,9 +1,9 @@
-from flask import Blueprint, render_template,redirect,url_for,flash
+from flask import Blueprint, render_template,redirect,url_for,flash,request
 from .form import StudentRegistrationForm,CompanyRegistrationForm,LoginForm,JobPostForm
 from werkzeug.security import generate_password_hash,check_password_hash,check_password_hash
 from .models import db,User,Student,Company,Job,Applications
 from flask_login import login_user,login_required,logout_user,current_user
-
+from datetime import datetime
 main=Blueprint('main',__name__)
 
 @main.route('/')
@@ -79,12 +79,77 @@ def login():
     
     return render_template('login.html',form=form)
     
-@main.route('/student/dashboard')
+@main.route('/student_dashboard')
 @login_required
 def student_dashboard():
-    return "<h1>Student Dashboard</h1>"
+    if current_user.role!='student':
+        flash('You are not authorized to access this page','danger')
+        return redirect(url_for('main.login'))
+    
+    available_jobs=Job.query.filter_by(status='Approved').all()
 
-@main.route('/company/dashboard')
+    my_applications=Applications.query.filter_by(student_id=current_user.student_profile.id).all()
+
+    applied_jobs_ids=[app.job_id for app in my_applications]
+
+    return render_template('student_dashboard.html',jobs=available_jobs,
+    my_applications=my_applications,applied_jobs_id=applied_jobs_ids,now=datetime.utcnow())
+
+@main.route('/student/apply/<int:job_id>',methods=['POST'])
+@login_required
+def apply_job(job_id):
+    if current_user.role!= 'student':
+        flash('You are not authorized to access this page','danger')
+        return redirect(url_for('main.login'))
+    
+    job=Job.query.get_or_404(job_id)
+    if job.status !='Approved':
+        flash('You cannot apply to this job.','danger')
+        return redirect(url_for('main.student_dashboard'))
+    
+    if job.deadline <datetime.utcnow():
+        flash('You cannot apply to this job.','danger')
+        return redirect(url_for('main.student_dashboard'))
+    
+    existing_app=Applications.query.filter_by(
+        student_id=current_user.student_profile.id,
+        job_id=job.id
+    ).first()
+
+    if existing_app:
+        flash('You have already applied to this job','warning')
+        return redirect(url_for('main.student_dashboard'))
+    else:
+        new_app=Applications(
+            student_id=current_user.student_profile.id,
+            job_id=job.id,
+            status='Applied'
+        )
+        db.session.add(new_app)
+        db.session.commit()
+        flash(f'You have successfully applied for {job.title} at {job.company.company_name}','success')
+        return redirect(url_for('main.student_dashboard'))
+
+@main.route('/student/edit_profile',methods=['GET','POST'])
+@login_required
+def edit_student_profile():
+    if current_user.role!='student':
+        return redirect(url_for('main.login'))
+    
+    student=current_user.student_profile
+    
+    if request.method=='POST':
+        student.name=request.form.get('full_name')
+        student.cgpa=float(request.form.get('cgpa'))
+        student.resume_url=request.form.get('resume_url')
+        db.session.commit()
+        flash('Profile updated successfully','success')
+        return redirect(url_for('main.student_dashboard'))
+    
+    return render_template('edit_student_profile.html',student=student)
+    
+
+@main.route('/company_dashboard')
 @login_required
 def company_dashboard():
     if current_user.role!='company':
@@ -97,7 +162,7 @@ def company_dashboard():
 
     my_jobs=Job.query.filter_by(company_id=current_user.company_profile.id)
 
-    return render_template('company_dashboard.html',jobs=my_jobs)
+    return render_template('company_dashboard.html',jobs=my_jobs,now=datetime.utcnow())
 
 
 @main.route('/company/create_job',methods=['GET','POST'])

@@ -36,13 +36,18 @@
                 <td>{{job.deadline.strftime('%Y-%m-%d')}}</td>
                 <td>
                     {% if job.status =='Approved' %}
+                    {% if job.deadline < now %}
+                    <span class="badge bg-danger">Deadline Passed</span>
+                    {% else %}
                     <span class="badge bg-success">Live</span>
+                    {% endif %}
                     {% elif job.status =='Pending' %}
                     <span class="badge bg-warning text-dark">Pending</span>
                     {% else %}
                     <span class="badge bg-secondary">{{job.status}}</span>
                     {% endif %}
 
+                    
                 </td>
                 <td class="btn btn-sm btn-outline-info" disabled>View (0)</td>
 
