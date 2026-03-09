@@ -1,0 +1,66 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Search Results for: "<span class="text-primary">{{ query }}</span>"</h2>
+        <a href="{{ url_for('main.admin_dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+
+    <h4 class="mt-4">Companies</h4>
+    {% if companies %}
+    <table class="table table-bordered table-striped">
+        <thead class="table-secondary">
+            <tr>
+                <th>Company Name</th>
+                <th>Company Website</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for company in companies %}
+            <tr>
+                <td>{{ company.company_name }}</td>
+                <td>{{ company.website}}</td>
+                <td>
+                    <a href="{{ url_for('main.view_detail', role='company', profile_id=company.id) }}" class="btn btn-sm btn-info">View Details</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="text-muted">No companies found matching your query.</p>
+    {% endif %}
+
+    <hr>
+
+    <h4 class="mt-4">Students</h4>
+    {% if students %}
+    <table class="table table-bordered table-striped">
+        <thead class="table-secondary">
+            <tr>
+                <th>ID</th>
+                <th>Student Name</th>
+                <th>Email</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in students %}
+            <tr>
+                <td>{{ student.id }}</td>
+                <td>{{ student.name }}</td>
+                <td>{{ student.user.email }}</td>
+                <td>
+                    <a href="{{ url_for('main.view_detail', role='student', profile_id=student.id) }}" class="btn btn-sm btn-info">View Details</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="text-muted">No students found matching your query.</p>
+    {% endif %}
+
+</div>
+{% endblock %}

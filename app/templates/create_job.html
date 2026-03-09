@@ -6,7 +6,8 @@
         <div class="col-md-8">
             <div class="card shadow">
                 <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">Post a Placement Drive</h4>
+                    <h4 class="mb-0">{% if edit_mode %}Edit Placement Drive{% else %}Post a New Placement Drive{% endif
+                        %}</h4>
                 </div>
                 <div class="card-body">
                     <form method="POST">
@@ -37,7 +38,8 @@
                         </div>
                         <div class="mb-3">
                             {{ form.criteria.label(class="form-label")}}
-                            {{ form.criteria(class="form-control",rows="2",placeholder="e.g. Min CGPA 7.0, No active backlogs")}}
+                            {{ form.criteria(class="form-control",rows="2",placeholder="e.g. Min CGPA 7.0, No active
+                            backlogs")}}
                             {% for error in form.criteria.errors %}
                             <div class="text-danger small">{{ error }}</div>
                             {% endfor %}

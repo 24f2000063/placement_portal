@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>{{ role.capitalize()}} Details</h2>
+        <a href="{{ url_for('main.admin_dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+
+    </div>
+    <div class="card shadow">
+        <div class="card-body">
+            {% if role == 'student' %}
+            <h4>Name: {{ profile.full_name }}</h4>
+            <p><strong>Student ID:</strong>{{profile.id}}</p>
+            <p><strong>Email:</strong>{{ profile.user.email }}</p>
+            <p><strong>CGPA:</strong>{{profile.cgpa}}</p>
+            <p><strong>Resume</strong>
+                {% if profile.resume_url %} <a href="{{ profile.resume_url }}" target="_blank">View Resume Link</a> {%
+                else %} Not provided {% endif %}
+            </p>
+            <p><strong>Account Status:</strong>
+                <span class="badge {{ 'bg-danger' if profile.user.is_blocked else 'bg-success' }}">
+                    {{ 'Blacklisted' if profile.user.is_blocked else 'Active' }}
+                </span>
+            </p>
+
+            {% elif role == 'company' %}
+            <h4>Company Name: {{ profile.company_name }}</h4>
+            <p><strong>Company ID:</strong> {{ profile.id }}</p>
+            <p><strong>Email:</strong> {{ profile.user.email }}</p>
+            <p><strong>Website:</strong> <a href="{{ profile.website }}" target="_blank">{{ profile.website }}</a></p>
+            <p><strong>Account Status:</strong>
+                <span class="badge {{ 'bg-danger' if profile.user.is_blocked else 'bg-success' }}">
+                    {{ 'Blacklisted' if profile.user.is_blocked else 'Active' }}
+                </span>
+            </p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

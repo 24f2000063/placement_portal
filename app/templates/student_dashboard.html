@@ -26,80 +26,97 @@
 
     <hr>
 
+    <hr>
     <div class="row">
         <div class="col-md-12 mb-5">
-            <h4 class="text-primary">Available Placement Drives</h4>
-
+            <h4 class="text-primary">Upcoming Placement Drives</h4>
             <div class="row">
                 {% for job in jobs %}
                 <div class="col-md-4 mb-3">
-                    <div class="card h-100 shadow-sm">
+                    <div class="card h-100 shadow-sm border-primary">
                         <div class="card-body">
-                            <h5 class="card-title">{{job.title}}</h5>
-                            <h6 class="card-subtitle mb-2 test-muted">{{ job.company.company_name}}</h6>
-                            <p class="card-text small">{{job.description[:100]}}...</p>
-                            <p class="card-text mb-1"><strong>Salary:</strong>{{ job.salary }}</p>
-                            <p class="card-text mb-2"><strong>Deadline :</strong>{{ job.deadline.strftime('%Y-%m-%d')}}</p>
-                            {% if job.id in applied_jobs_ids %}
-                                <button class="btn btn-success w-100" disabled>Already Applied</button>
-                            {% elif job.deadline < now %}
-                                <button class="btn btn-secondary w-100" disabled>Deadline Passed</button>
-                            {% else %}
-                             <form action="{{url_for('main.apply_job',job_id=job.id)}}" method="POST">
+                            <h5 class="card-title">{{ job.title }}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ job.company.name }}</h6>
+                            <p class="card-text small">{{ job.description[:100] }}...</p>
+                            <p class="card-text mb-1"><strong>Salary:</strong> {{ job.salary }}</p>
+                            <p class="card-text mb-2 text-danger"><strong>Deadline:</strong> {{ job.deadline.strftime('%Y-%m-%d') }}</p>
+                            
+                            <form action="{{ url_for('main.apply_job', job_id=job.id) }}" method="POST">
                                 <button type="submit" class="btn btn-primary w-100">Apply Now</button>
-                             </form>
-                            {% endif %}
+                            </form>
                         </div>
                     </div>
                 </div>
                 {% else %}
-                <p class="text-muted">No jobs available at the moment</p>
+                <div class="col-12">
+                    <div class="alert alert-primary fw-semibold"">No new upcoming drives available to apply at the moment.</div>
+                </div>
                 {% endfor %}
             </div>
         </div>
 
-        <div class="col-md-12">
-            <h4 class="text-info">
-                My Application History
-            </h4>
-            <table class="table table-bordered table-hover">
-                <thead class="table-dark">
-                    <th>Company</th>
-                    <th>Job Title</th>
-                    <th>Date Applied</th>
-                    <th>Status</th>
-    
+        <div class="col-md-12 mb-5">
+            <h4 class="text-warning text-dark">Applications Under Review (Pending)</h4>
+            <table class="table table-bordered table-hover shadow-sm bg-white">
+                <thead class="table-warning">
+                    <tr>
+                        <th>Company</th>
+                        <th>Job Title</th>
+                        <th>Date Applied</th>
+                        <th>Status</th>
+                    </tr>
                 </thead>
-
                 <tbody>
-                    {% for app in my_applications %}
+                    {% for app in pending_apps %}
                     <tr>
                         <td>{{ app.job.company.company_name }}</td>
                         <td>{{ app.job.title }}</td>
-                        <td>{{ app.date_applied.strftime('%Y-%m-%d')}}</td>
-                        <td>
-                            {% if app.status=='Applied' %}
-                            <span class="badge bg-primary">{{app.status}}</span>
-                            {% elif app.status=='Shortlisted' %}
-                            <span class="badge bg-info text-dark">{{ app.status}}</span>
-                            {% elif app.status=='Selected' %}
-                            <span class="badge bg-success">{{ app.status }}</span>
-                            {% elif app.status=='Rejected' %}
-                            <span class="badge bg-danger">{{ app.status }}</span>
-                            {% endif %}
-                        </td>
+                        <td>{{ app.date_applied.strftime('%Y-%m-%d') }}</td>
+                        <td><span class="badge bg-secondary">Under Review</span></td>
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="4" class="text-center">You haven't applied to any drive</td>
+                        <td colspan="4" class="text-center text-muted">No pending applications.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
 
-
-
+        <div class="col-md-12">
+            <h4 class="text-success">Application History & Results</h4>
+            <table class="table table-bordered table-hover shadow-sm bg-white">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Company</th>
+                        <th>Job Title</th>
+                        <th>Date Applied</th>
+                        <th>Final Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for app in processed_apps %}
+                    <tr>
+                        <td>{{ app.job.company.company_name }}</td>
+                        <td>{{ app.job.title }}</td>
+                        <td>{{ app.date_applied.strftime('%Y-%m-%d') }}</td>
+                        <td>
+                            {% if app.status == 'Shortlisted' %}
+                                <span class="badge bg-info text-dark">Shortlisted</span>
+                            {% elif app.status == 'Selected' %}
+                                <span class="badge bg-success">Selected</span>
+                            {% elif app.status == 'Rejected' %}
+                                <span class="badge bg-danger">Rejected</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">No processed applications yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
 {% endblock %}
