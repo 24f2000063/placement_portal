@@ -8,7 +8,8 @@
 
     <h4 class="mt-4">Companies</h4>
     {% if companies %}
-    <table class="table table-bordered table-striped">
+    <div class="table-responsive">
+<table class="table table-bordered table-striped">
         <thead class="table-secondary">
             <tr>
                 <th>Company Name</th>
@@ -28,6 +29,7 @@
             {% endfor %}
         </tbody>
     </table>
+</div>
     {% else %}
     <p class="text-muted">No companies found matching your query.</p>
     {% endif %}
@@ -36,7 +38,8 @@
 
     <h4 class="mt-4">Students</h4>
     {% if students %}
-    <table class="table table-bordered table-striped">
+    <div class="table-responsive">
+<table class="table table-bordered table-striped">
         <thead class="table-secondary">
             <tr>
                 <th>ID</th>
@@ -58,6 +61,7 @@
             {% endfor %}
         </tbody>
     </table>
+</div>
     {% else %}
     <p class="text-muted">No students found matching your query.</p>
     {% endif %}

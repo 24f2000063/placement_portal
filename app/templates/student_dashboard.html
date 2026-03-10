@@ -57,7 +57,8 @@
 
         <div class="col-md-12 mb-5">
             <h4 class="text-warning text-dark">Applications Under Review (Pending)</h4>
-            <table class="table table-bordered table-hover shadow-sm bg-white">
+            <div class="table-responsive">
+<table class="table table-bordered table-hover shadow-sm bg-white">
                 <thead class="table-warning">
                     <tr>
                         <th>Company</th>
@@ -81,11 +82,13 @@
                     {% endfor %}
                 </tbody>
             </table>
+</div>
         </div>
 
         <div class="col-md-12">
             <h4 class="text-success">Application History & Results</h4>
-            <table class="table table-bordered table-hover shadow-sm bg-white">
+            <div class="table-responsive">
+<table class="table table-bordered table-hover shadow-sm bg-white">
                 <thead class="table-dark">
                     <tr>
                         <th>Company</th>
@@ -117,6 +120,7 @@
                     {% endfor %}
                 </tbody>
             </table>
+</div>
         </div>
     </div>
 {% endblock %}

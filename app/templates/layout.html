@@ -2,78 +2,76 @@
 <html lang="en">
 
 <head>
-    <head>
     <style>
-        
         body {
-            
-            background: linear-gradient(rgba(240, 242, 245, 0.85), rgba(240, 242, 245, 0.90)), 
-                        url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=1200&auto=format&fit=crop');
+
+            background: linear-gradient(rgba(240, 242, 245, 0.85), rgba(240, 242, 245, 0.90)),
+                url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=1200&auto=format&fit=crop');
             background-size: cover;
             background-position: center;
-            background-attachment: fixed; 
+            background-attachment: fixed;
             background-color: #f8f9fa;
         }
 
-        
+
         .card {
             background-color: rgba(255, 255, 255, 0.95) !important;
             backdrop-filter: blur(8px);
             border: none !important;
             border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05); 
-            transition: transform 0.2s ease; 
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease;
         }
 
-        
+
         .card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
         }
 
 
-        .form-control, .form-select {
-            border-radius: 8px; 
-            padding: 0.75rem 1rem; 
+        .form-control,
+        .form-select {
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
             border: 1px solid #ced4da;
             transition: all 0.3s ease;
         }
-        
-    
-        .form-control:focus, .form-select:focus {
+
+
+        .form-control:focus,
+        .form-select:focus {
             border-color: #0d6efd;
-            box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.15); 
+            box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.15);
         }
 
-    
+
         .table {
-            vertical-align: middle; 
+            vertical-align: middle;
             margin-bottom: 0;
         }
-        
+
         .table thead th {
-            text-transform: uppercase; 
-            font-size: 0.85rem; 
-            letter-spacing: 0.5px; 
-            color: #6c757d; 
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            color: #6c757d;
             border-bottom: 2px solid #e9ecef;
             padding: 1rem;
         }
 
         .table tbody td {
-            padding: 1rem; 
+            padding: 1rem;
             color: #495057;
         }
-        
-        
+
+
         .badge {
             padding: 0.5em 0.8em;
-            border-radius: 50rem; 
+            border-radius: 50rem;
             font-weight: 500;
         }
-
     </style>
-</head>
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -85,51 +83,58 @@
 <body>
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm sticky-top mb-4">
-    <div class="container">
-        <a class="navbar-brand fw-bold text-uppercase letter-spacing" href="/">
-            🎓 Placement Portal
-        </a>
-        
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        
-        <div class="collapse navbar-collapse" id="navbarContent">
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                {% if current_user.is_authenticated %}
+        <div class="container">
+            <a class="navbar-brand fw-bold text-uppercase letter-spacing" href="/">
+                🎓 Placement Portal
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    {% if current_user.is_authenticated %}
                     <li class="nav-item">
                         <span class="nav-link text-light me-3">Welcome, {{ current_user.email }}</span>
                     </li>
                     <li class="nav-item">
                         {% if current_user.role == 'admin' %}
-                            <a class="nav-link btn btn-outline-light btn-sm px-3 me-2" href="{{ url_for('main.admin_dashboard') }}">Dashboard</a>
+                        <a class="nav-link btn btn-outline-light btn-sm px-3 me-2"
+                            href="{{ url_for('main.admin_dashboard') }}">Dashboard</a>
                         {% elif current_user.role == 'company' %}
-                            <a class="nav-link btn btn-outline-light btn-sm px-3 me-2" href="{{ url_for('main.company_dashboard') }}">Dashboard</a>
+                        <a class="nav-link btn btn-outline-light btn-sm px-3 me-2"
+                            href="{{ url_for('main.company_dashboard') }}">Dashboard</a>
                         {% elif current_user.role == 'student' %}
-                            <a class="nav-link btn btn-outline-light btn-sm px-3 me-2" href="{{ url_for('main.student_dashboard') }}">Dashboard</a>
+                        <a class="nav-link btn btn-outline-light btn-sm px-3 me-2"
+                            href="{{ url_for('main.student_dashboard') }}">Dashboard</a>
                         {% endif %}
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link btn btn-danger btn-sm text-white px-3" href="{{ url_for('main.logout') }}">Logout</a>
+                        <a class="nav-link btn btn-danger btn-sm text-white px-3"
+                            href="{{ url_for('main.logout') }}">Logout</a>
                     </li>
-                {% else %}
+                    {% else %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('main.login') }}">Login</a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle btn btn-primary text-white px-3 ms-2" href="#" id="registerDropdown" role="button" data-bs-toggle="dropdown">
+                        <a class="nav-link dropdown-toggle btn btn-primary text-white px-3 ms-2" href="#"
+                            id="registerDropdown" role="button" data-bs-toggle="dropdown">
                             Register
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="{{ url_for('main.register', role='student') }}">As Student</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('main.register', role='company') }}">As Company</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.register', role='student') }}">As
+                                    Student</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.register', role='company') }}">As
+                                    Company</a></li>
                         </ul>
                     </li>
-                {% endif %}
-            </ul>
+                    {% endif %}
+                </ul>
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
 
 
     <div class="container mt-4">

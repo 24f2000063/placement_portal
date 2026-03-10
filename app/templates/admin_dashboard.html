@@ -2,11 +2,11 @@
 
 {% block content %}
 
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 gap-3">
     <h2>Admin Dashboard</h2>
-    <form class="d-flex" method="GET" action="{{ url_for('main.admin_search') }}">
-        <input class="form-control me-2" type="search" name="search" placeholder="Search students, companies..."
-            style="width: 19rem;">
+    <form class="d-flex w-100 w-md-auto" method="GET" action="{{ url_for('main.admin_search') }}">
+        <input class="form-control me-2 flex-grow-1" type="search" name="search"
+            placeholder="Search students, companies...">
         <button class="btn btn-outline-primary" type="submit">Search</button>
     </form>
 </div>
@@ -60,32 +60,34 @@
 <h4 class="mt-4 text-danger">Pending Company Approvals</h4>
 {% if pending_companies %}
 
-<table class="table table-bordered table-striped">
-    <thead class="table-dark">
-        <tr>
-            <th>Company Name</th>
-            <th>Email</th>
-            <th>Website</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for company in pending_companies %}
-        <tr>
-            <td>{{ company.company_name}}</td>
-            <td>{{ company.user.email}}</td>
-            <td>{{ company.website}}</td>
-            <td>
-                <a href="{{ url_for('main.approve_company', company_id=company.id)}}"
-                    class="btn btn-sm btn-success">Approve</a>
-                <a href="{{url_for('main.reject_company',company_id=company.id)}}"
-                    class="btn btn-sm btn-danger">Reject</a>
+<div class="table-responsive">
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Company Name</th>
+                <th>Email</th>
+                <th>Website</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for company in pending_companies %}
+            <tr>
+                <td>{{ company.company_name}}</td>
+                <td>{{ company.user.email}}</td>
+                <td>{{ company.website}}</td>
+                <td>
+                    <a href="{{ url_for('main.approve_company', company_id=company.id)}}"
+                        class="btn btn-sm btn-success">Approve</a>
+                    <a href="{{url_for('main.reject_company',company_id=company.id)}}"
+                        class="btn btn-sm btn-danger">Reject</a>
 
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% else %}
 <p class="text-success">No pending companies</p>
 {% endif %}
@@ -93,121 +95,127 @@
 <hr>
 
 <h4 class="mt-4 text-success">All Companies</h4>
-<table class="table table-bordered">
-    <thead class="table-secondary">
-        <tr>
-            <th>Company Name</th>
-            <th>Email</th>
-            <th>Status</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
+<div class="table-responsive">
+    <table class="table table-bordered">
+        <thead class="table-secondary">
+            <tr>
+                <th>Company Name</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
 
 
-    <tbody>
-        {% for company in approved_companies %}
+        <tbody>
+            {% for company in approved_companies %}
 
-        <tr class="{{ 'table-danger' if company.user.is_blocked else ''}}">
-            <td>{{ company.company_name}}</td>
-            <td>{{ company.user.email}}</td>
-            <td>
-                {% if company.user.is_blocked %}
-                <span class="badge bg-danger">Blacklisted</span>
-                {% else %}
-                <span class="badge bg-success">Active</span>
-                {% endif %}
+            <tr class="{{ 'table-danger' if company.user.is_blocked else ''}}">
+                <td>{{ company.company_name}}</td>
+                <td>{{ company.user.email}}</td>
+                <td>
+                    {% if company.user.is_blocked %}
+                    <span class="badge bg-danger">Blacklisted</span>
+                    {% else %}
+                    <span class="badge bg-success">Active</span>
+                    {% endif %}
 
-            </td>
-            <td>
-                {% if company.user.is_blocked %}
-                <a href="{{url_for('main.toggle_blacklist',user_id=company.user_id)}}"
-                    class="btn btn-sm btn-success">Unblock</a>
-                {% else %}
-                <a href="{{url_for('main.toggle_blacklist',user_id=company.user_id)}}"
-                    class="btn btn-sm btn-danger">Block</a>
-                {% endif %}
-                <a href="{{ url_for('main.view_detail', role='company', profile_id=company.id) }}"
-                    class="btn btn-sm btn-info ms-4">View Details</a>
-            </td>
+                </td>
+                <td>
+                    {% if company.user.is_blocked %}
+                    <a href="{{url_for('main.toggle_blacklist',user_id=company.user_id)}}"
+                        class="btn btn-sm btn-success">Unblock</a>
+                    {% else %}
+                    <a href="{{url_for('main.toggle_blacklist',user_id=company.user_id)}}"
+                        class="btn btn-sm btn-danger">Block</a>
+                    {% endif %}
+                    <a href="{{ url_for('main.view_detail', role='company', profile_id=company.id) }}"
+                        class="btn btn-sm btn-info ms-4">View Details</a>
+                </td>
 
-        </tr>
+            </tr>
 
-        {% endfor %}
-    </tbody>
-</table>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
 <hr>
 
 <h4 class="mt-4">Registered Students</h4>
-<table class="table table-bordered">
-    <thead class="table-secondary">
-        <tr>
-            <th>Name</th>
-            <th>Branch</th>
-            <th>CGPA</th>
-            <th>Status</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for student in all_students %}
-        <tr class="{{ 'table-danger' if student.user.is_blocked else ''}}">
-            <td>{{ student.name}}</td>
-            <td>{{ student.branch}}</td>
-            <td>{{ student.cgpa}}</td>
-            <td>
-                {% if student.user.is_blocked %}
-                <span class="badge bg-danger">Blacklisted</span>
-                {% else %}
-                <span class="badge bg-success">Active</span>
-                {% endif %}
-            </td>
-            <td>
-                {% if student.user.is_blocked %}
-                <a href="{{url_for('main.toggle_blacklist',user_id=student.user_id)}}"
-                    class="btn btn-sm btn-success">Unblock</a>
-                {% else %}
-                <a href="{{url_for('main.toggle_blacklist',user_id=student.user_id)}}"
-                    class="btn btn-sm btn-danger">Block</a>
-                {% endif %}
-                <a href="{{ url_for('main.view_detail', role='student', profile_id=student.id) }}"
-                    class="btn btn-sm btn-info ms-4">View Details</a>
+<div class="table-responsive">
+    <table class="table table-bordered">
+        <thead class="table-secondary">
+            <tr>
+                <th>Name</th>
+                <th>Branch</th>
+                <th>CGPA</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in all_students %}
+            <tr class="{{ 'table-danger' if student.user.is_blocked else ''}}">
+                <td>{{ student.name}}</td>
+                <td>{{ student.branch}}</td>
+                <td>{{ student.cgpa}}</td>
+                <td>
+                    {% if student.user.is_blocked %}
+                    <span class="badge bg-danger">Blacklisted</span>
+                    {% else %}
+                    <span class="badge bg-success">Active</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if student.user.is_blocked %}
+                    <a href="{{url_for('main.toggle_blacklist',user_id=student.user_id)}}"
+                        class="btn btn-sm btn-success">Unblock</a>
+                    {% else %}
+                    <a href="{{url_for('main.toggle_blacklist',user_id=student.user_id)}}"
+                        class="btn btn-sm btn-danger">Block</a>
+                    {% endif %}
+                    <a href="{{ url_for('main.view_detail', role='student', profile_id=student.id) }}"
+                        class="btn btn-sm btn-info ms-4">View Details</a>
 
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
 
-</table>
+    </table>
+</div>
 
 <hr>
 <h4 class="mt-4 text-dark">Pending Placement Drives</h4>
 {% if pending_jobs %}
-<table class="table table-bordered table-striped">
-    <thead class="table-dark">
-        <tr>
-            <th>Company Name</th>
-            <th>Job Title</th>
-            <th>Salary</th>
-            <th>Deadline</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for job in pending_jobs %}
-        <tr>
-            <td>{{ job.company.company_name }}</td>
-            <td>{{ job.title }}</td>
-            <td>{{ job.salary }}</td>
-            <td>{{ job.deadline.strftime('%Y-%m-%d')}}</td>
-            <td>
-                <a href="{{url_for('main.approve_job',job_id=job.id)}}" class="btn btn-sm btn-success">Approve</a>
-                <a href="{{url_for('main.reject_job',job_id=job.id)}}" class="btn btn-sm btn-danger">Reject</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="table-responsive">
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Company Name</th>
+                <th>Job Title</th>
+                <th>Salary</th>
+                <th>Deadline</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for job in pending_jobs %}
+            <tr>
+                <td>{{ job.company.company_name }}</td>
+                <td>{{ job.title }}</td>
+                <td>{{ job.salary }}</td>
+                <td>{{ job.deadline.strftime('%Y-%m-%d')}}</td>
+                <td>
+                    <a href="{{url_for('main.approve_job',job_id=job.id)}}" class="btn btn-sm btn-success">Approve</a>
+                    <a href="{{url_for('main.reject_job',job_id=job.id)}}" class="btn btn-sm btn-danger">Reject</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% else %}
 <p class="text-muted">No pending job approvals.</p>
 {% endif %}
@@ -215,73 +223,77 @@
 
 <hr>
 <h4 class="mt-4 text-success">Ongoing Placement Drives</h4>
-<table class="table table-bordered">
-    <thead class="table-light">
-        <tr>
-            <th>Drive Name</th>
-            <th>Company</th>
-            <th>Deadline</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for job in ongoing_jobs %}
-        <tr>
-            <td>{{ job.title }}</td>
-            <td>
-                <a href="{{ url_for('main.view_detail', role='company', profile_id=job.company.id) }}">{{
-                    job.company.company_name }}</a>
-            </td>
-            <td>{{ job.deadline.strftime('%Y-%m-%d') }}</td>
-            <td>
-                <a href="{{ url_for('main.mark_drive_complete', job_id=job.id) }}"
-                    class="btn btn-sm btn-outline-success">Mark as Complete</a>
-            </td>
-        </tr>
-        {% else %}
-        <tr>
-            <td colspan="4" class="text-center">No ongoing drives.</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="table-responsive">
+    <table class="table table-bordered">
+        <thead class="table-light">
+            <tr>
+                <th>Drive Name</th>
+                <th>Company</th>
+                <th>Deadline</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for job in ongoing_jobs %}
+            <tr>
+                <td>{{ job.title }}</td>
+                <td>
+                    <a href="{{ url_for('main.view_detail', role='company', profile_id=job.company.id) }}">{{
+                        job.company.company_name }}</a>
+                </td>
+                <td>{{ job.deadline.strftime('%Y-%m-%d') }}</td>
+                <td>
+                    <a href="{{ url_for('main.mark_drive_complete', job_id=job.id) }}"
+                        class="btn btn-sm btn-outline-success">Mark as Complete</a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="4" class="text-center">No ongoing drives.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
 
 <hr>
 <hr>
-<div class="d-flex justify-content-between align-items-center mt-4 mb-3">
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mt-4 mb-3 gap-3">
     <h4 class="text-primary mb-0">Student Applications History</h4>
     <a href="{{ url_for('main.export_applications') }}" class="btn btn-sm btn-success shadow-sm">
         ⬇️ Export to CSV
     </a>
 </div>
-<table class="table table-bordered table-striped">
-    <thead class="table-dark">
-        <tr>
-            <th>Sr No.</th>
-            <th>Student Name</th>
-            <th>Drive (Job Title)</th>
-            <th>Company</th>
-            <th>Date Applied</th>
-            <th>Status</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for app in all_applications %}
-        <tr>
-            <td>{{ loop.index }}</td>
-            <td>{{ app.student.name }}</td>
-            <td>{{ app.job.title }}</td>
-            <td>{{ app.job.company.company_name }}</td>
-            <td>{{ app.date_applied.strftime('%Y-%m-%d') }}</td>
-            <td><strong>{{ app.status }}</strong></td>
-            <td>
-                <a href="{{ url_for('main.view_detail', role='student', profile_id=app.student.id) }}"
-                    class="btn btn-sm btn-primary">View Student</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="table-responsive">
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Sr No.</th>
+                <th>Student Name</th>
+                <th>Drive (Job Title)</th>
+                <th>Company</th>
+                <th>Date Applied</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for app in all_applications %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ app.student.name }}</td>
+                <td>{{ app.job.title }}</td>
+                <td>{{ app.job.company.company_name }}</td>
+                <td>{{ app.date_applied.strftime('%Y-%m-%d') }}</td>
+                <td><strong>{{ app.status }}</strong></td>
+                <td>
+                    <a href="{{ url_for('main.view_detail', role='student', profile_id=app.student.id) }}"
+                        class="btn btn-sm btn-primary">View Student</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}
