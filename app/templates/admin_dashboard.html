@@ -3,16 +3,17 @@
 {% block content %}
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Admin Dashboard</h2>
-        <form class="d-flex" method="GET" action="{{ url_for('main.admin_search') }}">
-            <input class="form-control me-2" type="search" name="search" placeholder="Search students, companies..." style="width: 19rem;">
-            <button class="btn btn-outline-primary" type="submit">Search</button>
-        </form>
-    </div>
+    <h2>Admin Dashboard</h2>
+    <form class="d-flex" method="GET" action="{{ url_for('main.admin_search') }}">
+        <input class="form-control me-2" type="search" name="search" placeholder="Search students, companies..."
+            style="width: 19rem;">
+        <button class="btn btn-outline-primary" type="submit">Search</button>
+    </form>
+</div>
 
 <div class="container mt-4">
 
-    
+
 
     <div class="row mb-4 text-center">
         <div class="col-md-3">
@@ -115,7 +116,7 @@
                 {% else %}
                 <span class="badge bg-success">Active</span>
                 {% endif %}
-                
+
             </td>
             <td>
                 {% if company.user.is_blocked %}
@@ -125,7 +126,8 @@
                 <a href="{{url_for('main.toggle_blacklist',user_id=company.user_id)}}"
                     class="btn btn-sm btn-danger">Block</a>
                 {% endif %}
-                <a href="{{ url_for('main.view_detail', role='company', profile_id=company.id) }}" class="btn btn-sm btn-info ms-4">View Details</a>
+                <a href="{{ url_for('main.view_detail', role='company', profile_id=company.id) }}"
+                    class="btn btn-sm btn-info ms-4">View Details</a>
             </td>
 
         </tr>
@@ -168,7 +170,8 @@
                 <a href="{{url_for('main.toggle_blacklist',user_id=student.user_id)}}"
                     class="btn btn-sm btn-danger">Block</a>
                 {% endif %}
-                <a href="{{ url_for('main.view_detail', role='student', profile_id=student.id) }}" class="btn btn-sm btn-info ms-4">View Details</a>
+                <a href="{{ url_for('main.view_detail', role='student', profile_id=student.id) }}"
+                    class="btn btn-sm btn-info ms-4">View Details</a>
 
             </td>
         </tr>
@@ -211,64 +214,74 @@
 
 
 <hr>
-    <h4 class="mt-4 text-success">Ongoing Placement Drives</h4>
-    <table class="table table-bordered">
-        <thead class="table-light">
-            <tr>
-                <th>Drive Name</th>
-                <th>Company</th>
-                <th>Deadline</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for job in ongoing_jobs %}
-            <tr>
-                <td>{{ job.title }}</td>
-                <td>
-                    <a href="{{ url_for('main.view_detail', role='company', profile_id=job.company.id) }}">{{ job.company.company_name }}</a>
-                </td>
-                <td>{{ job.deadline.strftime('%Y-%m-%d') }}</td>
-                <td>
-                    <a href="{{ url_for('main.mark_drive_complete', job_id=job.id) }}" class="btn btn-sm btn-outline-success">Mark as Complete</a>
-                </td>
-            </tr>
-            {% else %}
-            <tr><td colspan="4" class="text-center">No ongoing drives.</td></tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<h4 class="mt-4 text-success">Ongoing Placement Drives</h4>
+<table class="table table-bordered">
+    <thead class="table-light">
+        <tr>
+            <th>Drive Name</th>
+            <th>Company</th>
+            <th>Deadline</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for job in ongoing_jobs %}
+        <tr>
+            <td>{{ job.title }}</td>
+            <td>
+                <a href="{{ url_for('main.view_detail', role='company', profile_id=job.company.id) }}">{{
+                    job.company.company_name }}</a>
+            </td>
+            <td>{{ job.deadline.strftime('%Y-%m-%d') }}</td>
+            <td>
+                <a href="{{ url_for('main.mark_drive_complete', job_id=job.id) }}"
+                    class="btn btn-sm btn-outline-success">Mark as Complete</a>
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="4" class="text-center">No ongoing drives.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
 
 <hr>
-    <hr>
-    <h4 class="mt-4">Student Applications History</h4>
-    <table class="table table-bordered table-striped">
-        <thead class="table-dark">
-            <tr>
-                <th>Sr No.</th>
-                <th>Student Name</th>
-                <th>Drive (Job Title)</th>
-                <th>Company</th>
-                <th>Date Applied</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for app in all_applications %}
-            <tr>
-                <td>{{ loop.index }}</td>
-                <td>{{ app.student.name }}</td>
-                <td>{{ app.job.title }}</td>
-                <td>{{ app.job.company.company_name }}</td>
-                <td>{{ app.date_applied.strftime('%Y-%m-%d') }}</td>
-                <td><strong>{{ app.status }}</strong></td>
-                <td>
-                    <a href="{{ url_for('main.view_detail', role='student', profile_id=app.student.id) }}" class="btn btn-sm btn-primary">View Student</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<hr>
+<div class="d-flex justify-content-between align-items-center mt-4 mb-3">
+    <h4 class="text-primary mb-0">Student Applications History</h4>
+    <a href="{{ url_for('main.export_applications') }}" class="btn btn-sm btn-success shadow-sm">
+        ⬇️ Export to CSV
+    </a>
+</div>
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Sr No.</th>
+            <th>Student Name</th>
+            <th>Drive (Job Title)</th>
+            <th>Company</th>
+            <th>Date Applied</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for app in all_applications %}
+        <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ app.student.name }}</td>
+            <td>{{ app.job.title }}</td>
+            <td>{{ app.job.company.company_name }}</td>
+            <td>{{ app.date_applied.strftime('%Y-%m-%d') }}</td>
+            <td><strong>{{ app.status }}</strong></td>
+            <td>
+                <a href="{{ url_for('main.view_detail', role='student', profile_id=app.student.id) }}"
+                    class="btn btn-sm btn-primary">View Student</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 {% endblock %}

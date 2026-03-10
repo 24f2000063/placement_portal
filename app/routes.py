@@ -1,14 +1,27 @@
-from flask import Blueprint, render_template,redirect,url_for,flash,request
+from flask import Blueprint, render_template,redirect,url_for,flash,request,make_response
 from .form import StudentRegistrationForm,CompanyRegistrationForm,LoginForm,JobPostForm
 from werkzeug.security import generate_password_hash,check_password_hash,check_password_hash
 from .models import db,User,Student,Company,Job,Applications
 from flask_login import login_user,login_required,logout_user,current_user
 from datetime import datetime
 from sqlalchemy import or_
+import csv
+import io
+
 main=Blueprint('main',__name__)
 
 @main.route('/')
 def index():
+    
+    if current_user.is_authenticated:
+        if current_user.role == 'admin':
+            return redirect(url_for('main.admin_dashboard'))
+        elif current_user.role == 'company':
+            return redirect(url_for('main.company_dashboard'))
+        else:
+            return redirect(url_for('main.student_dashboard'))
+            
+    
     return render_template('home.html')
 
 @main.route('/register/<role>',methods=['GET','POST'])
@@ -458,6 +471,36 @@ def toggle_blacklist(user_id):
     db.session.commit()
     return redirect(url_for('main.admin_dashboard'))
 
+@main.route('/admin/export_applications')
+@login_required
+def export_applications():
+    if current_user.role != 'admin':
+        return redirect(url_for('main.login'))
+    applications=Applications.query.all()
+
+    si=io.StringIO()
+    cw=csv.writer(si)
+
+    cw.writerow(['App ID', 'Student Name', 'Student Email', 'Student CGPA', 'Company Name', 'Job Title', 'Date Applied', 'Final Status'])
+
+    for app in applications:
+        cw.writerow([
+            app.id,
+            app.student.name,
+            app.student.user.email,
+            app.student.cgpa,
+            app.job.company.company_name,
+            app.job.title,
+            app.date_applied,
+            app.status
+        ])
+    
+    output=make_response(si.getvalue())
+
+    output.headers['content-Disposition']='attachment; filename="placement_applications.csv"'
+
+    return output
+
 
 
 
@@ -466,6 +509,7 @@ def toggle_blacklist(user_id):
 
 @main.route('/logout')
 def logout():
+
     logout_user()
     flash('You have been logged out','success')
     return redirect(url_for('main.index'))

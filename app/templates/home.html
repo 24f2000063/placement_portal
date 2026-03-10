@@ -1,5 +1,37 @@
-{% extends 'layout.html' %}
+{% extends "layout.html" %}
 {% block content %}
-<h1>Placement Portal is Running!</h1>
+<div class="container mt-5 mb-5">
+    <div class="row align-items-center bg-white rounded-4 shadow-lg p-5 border-top border-primary border-5">
+
+        <div class="col-md-7 text-center text-md-start mb-4 mb-md-0">
+            <h1 class="display-4 fw-bold text-dark mb-3">Launch Your <span class="text-primary">Career</span></h1>
+            <p class="lead text-muted mb-4">
+                Welcome to the official Placement Management Portal. Connecting top student talent with industry-leading
+                companies seamlessly.
+            </p>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-start mb-3">
+                <a href="{{ url_for('main.register', role='student') }}" class="btn btn-primary btn-lg px-4 shadow-sm">
+                    Student Portal
+                </a>
+                <a href="{{ url_for('main.register', role='company') }}"
+                    class="btn btn-outline-dark btn-lg px-4 shadow-sm">
+                    Partner Company
+                </a>
+            </div>
+
+            <div class="mt-2">
+                <p class="small text-muted">Already registered?
+                    <a href="{{ url_for('main.login') }}" class="fw-bold text-decoration-none">Login here</a>
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-5 d-none d-md-block text-center">
+<img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=800&auto=format&fit=crop" alt="Student Career Journey" class="img-fluid rounded-4 shadow">
+        </div>
+
+    </div>
+</div>
 
 {% endblock %}
