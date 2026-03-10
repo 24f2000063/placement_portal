@@ -30,8 +30,8 @@ class Student(db.Model):
     roll_no=db.Column(db.String(20),unique=True,nullable=False)
     branch=db.Column(db.String(100))
     cgpa=db.Column(db.Float)
-    resume_url=db.Column(db.String(200))
-    applications=db.relationship('Applications',backref='student',lazy=True)
+    resume_url=db.Column(db.String(200))    
+    applications=db.relationship('Applications',backref='student',lazy=True)    
 
 class Job(db.Model):
     id=db.Column(db.Integer,primary_key=True)
